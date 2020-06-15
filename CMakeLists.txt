@@ -37,7 +37,9 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 find_package(OpenCV REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOPENCV")
-
+MESSAGE( " *** OpenCV_INCLUDE_DIRS : " ${OpenCV_INCLUDE_DIRS} )
+MESSAGE( " *** OpenCV_LIB_DIRS : " ${OpenCV_LIB_DIRS} )
+MESSAGE( " *** OpenCV_LIBS : " ${OpenCV_LIBS} )
 # gives problems in cross-compiling, probably malformed cmake config
 #find_package(yaml-cpp REQUIRED)
 
@@ -112,6 +114,16 @@ target_link_libraries(map_demo tkDNN)
 add_executable(demo demo/demo/demo.cpp)
 target_link_libraries(demo tkDNN)
 
+find_package(PythonLibs COMPONENTS Interpreter NumPy)
+MESSAGE( " *** PYTHON_INCLUDE_DIRS : " ${PYTHON_INCLUDE_DIRS} )
+MESSAGE( " *** PYTHON_LIBRARIES : " ${PYTHON_LIBRARIES} )
+include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(python)
+
+add_subdirectory(pybind11)
+
+pybind11_add_module(py_darknet python/py_darknet.cpp)
+target_link_libraries(py_darknet PRIVATE ${PYTHON_LIBRARIES} ${OpenCV_LIBS} tkDNN)
 #-------------------------------------------------------------------------------
 # Install
 #-------------------------------------------------------------------------------
