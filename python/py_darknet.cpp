@@ -41,10 +41,12 @@ cv::Mat numpy_uint8_3c_to_cv_mat(py::array_t<unsigned char>& input) {
 class Tkdnn_darknet
 {
 public:
-    Tkdnn_darknet(const std::string &name, const int n_classes, const int n_batch) 
+    Tkdnn_darknet(const std::string &name, const int n_classes, const int n_batch, const int min_h, const double min_conf) 
     {
         this->n_batch = n_batch;
         this->n_classes = n_classes;
+        this->d_confident = min_conf;
+        this->min_detection_height = min_h;
         yolo.init(name, n_classes, n_batch);
     }
     
@@ -59,8 +61,12 @@ public:
         for(int bi=0; bi<batch_dnn_input.size(); ++bi){
                 // draw dets
                 for(int i=0; i<yolo.batchDetected[bi].size(); i++) {
-                    std::vector <int32_t> _det;
                     tk::dnn::box b = yolo.batchDetected[bi][i];
+                    if (b.prob < this->d_confident || b.w < this->min_detection_height)
+                    {
+                        continue;
+                    }
+                    std::vector <int32_t> _det;
                     _det.push_back(frameid);
                     _det.push_back(-1);
                     _det.push_back((int32_t) b.x);
@@ -83,6 +89,8 @@ private:
     std::vector<cv::Mat> batch_dnn_input;
     int n_batch;
     int n_classes;
+    double d_confident;
+    int min_detection_height;
     tk::dnn::Yolo3Detection yolo;
 };   
 
