@@ -106,7 +106,7 @@ PYBIND11_MODULE(py_darknet, m)
 
     // bindings to Pet class
     py::class_<Tkdnn_darknet>(m, "Tkdnn_darknet")
-        .def(py::init<const std::string &, int, int> ())
+        .def(py::init<const std::string &, int, int, int, double> ())
         .def("queue_image", &Tkdnn_darknet::queue_image)
         .def("inference", &Tkdnn_darknet::inference);
 }
