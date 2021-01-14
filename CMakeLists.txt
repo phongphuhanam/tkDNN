@@ -112,6 +112,9 @@ target_link_libraries(test_rtinference tkDNN)
 add_executable(map_demo demo/demo/map.cpp)
 target_link_libraries(map_demo tkDNN)
 
+add_executable(map_demo_json demo/demo/map_json.cpp)
+target_link_libraries(map_demo_json tkDNN)
+
 add_executable(demo demo/demo/demo.cpp)
 target_link_libraries(demo tkDNN)
 
