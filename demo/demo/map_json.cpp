@@ -31,11 +31,11 @@ int main(int argc, char *argv[])
     const char *config_filename = "../demo/config.yaml";
     const char * net = "yolo3.rt";
     const char * labels_path = "../demo/COCO_val2017/all_labels.txt";
-    bool show = false;
+    bool show = true;
     bool write_dets = false;
     bool write_res_on_file = true;
     bool write_coco_json = true;
-    int n_images = 5000;
+    int n_images = 6000;
 
     bool verbose;
     int classes, map_points, map_levels;
@@ -70,6 +70,8 @@ int main(int argc, char *argv[])
     std::string net_name;
     removePathAndExtension(net, net_name);
     std::cout<<"Network: "<<net_name<<std::endl;
+
+    // std::string dirname
 
     //open files (if needed)
     std::ofstream times, memory, coco_json;
@@ -125,7 +127,7 @@ int main(int argc, char *argv[])
         tk::dnn::Frame f;
         f.lFilename = l_filename;
         f.iFilename = l_filename;
-        convertFilename(f.iFilename, "labels", "images", ".txt", ".jpg");
+        // convertFilename(f.lFilename, "labels", "images", ".jpg", ".txt");
 
         // read frame
         if(!fileExist(f.iFilename.c_str()))
@@ -179,21 +181,21 @@ int main(int argc, char *argv[])
             myfile.close();
 
         // read and save groundtruth labels
-        if(fileExist(f.lFilename.c_str()))
-        {
-            std::ifstream labels(l_filename);
-            for(std::string line; std::getline(labels, line); ){
-                std::istringstream in(line); 
-                tk::dnn::BoundingBox b;
-                in >> b.cl >> b.x >> b.y >> b.w >> b.h;  
-                b.prob = 1;
-                b.truthFlag = 1;
-                f.gt.push_back(b);
+        // if(fileExist(f.lFilename.c_str()))
+        // {
+        //     std::ifstream labels(l_filename);
+        //     for(std::string line; std::getline(labels, line); ){
+        //         std::istringstream in(line); 
+        //         tk::dnn::BoundingBox b;
+        //         in >> b.cl >> b.x >> b.y >> b.w >> b.h;  
+        //         b.prob = 1;
+        //         b.truthFlag = 1;
+        //         f.gt.push_back(b);
 
-                if(show)// draw rectangle for groundtruth
-                    cv::rectangle(batch_frames[0], cv::Point((b.x-b.w/2)*width, (b.y-b.h/2)*height), cv::Point((b.x+b.w/2)*width,(b.y+b.h/2)*height), cv::Scalar(0, 255, 0), 2);             
-            }
-        }    
+        //         if(show)// draw rectangle for groundtruth
+        //             cv::rectangle(batch_frames[0], cv::Point((b.x-b.w/2)*width, (b.y-b.h/2)*height), cv::Point((b.x+b.w/2)*width,(b.y+b.h/2)*height), cv::Scalar(0, 255, 0), 2);             
+        //     }
+        // }    
       
         images.push_back(f);
         
@@ -218,11 +220,11 @@ int main(int argc, char *argv[])
     std::cout << "Avg VM[MB]: " << vm_total/images_done/1024.0 << ";Avg RSS[MB]: " << rss_total/images_done/1024.0 << std::endl;
 
     //compute mAP
-    double AP = tk::dnn::computeMapNIoULevels(images,classes,IoU_thresh,conf_thresh, map_points, map_step, map_levels, verbose, write_res_on_file, net_name);
-    std::cout<<"mAP "<<IoU_thresh<<":"<<IoU_thresh+map_step*(map_levels-1)<<" = "<<AP<<std::endl;
+    // double AP = tk::dnn::computeMapNIoULevels(images,classes,IoU_thresh,conf_thresh, map_points, map_step, map_levels, verbose, write_res_on_file, net_name);
+    // std::cout<<"mAP "<<IoU_thresh<<":"<<IoU_thresh+map_step*(map_levels-1)<<" = "<<AP<<std::endl;
 
     //compute average precision, recall and f1score
-    tk::dnn::computeTPFPFN(images,classes,IoU_thresh,conf_thresh, verbose, write_res_on_file, net_name);
+    // tk::dnn::computeTPFPFN(images,classes,IoU_thresh,conf_thresh, verbose, write_res_on_file, net_name);
 
     if(write_res_on_file){
         memory<<vm_total/images_done/1024.0<<";"<<rss_total/images_done/1024.0<<"\n";
