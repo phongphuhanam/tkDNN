@@ -11,7 +11,7 @@ import cv2
 
 def test_add():
     img = cv2.imread("dog.jpg", cv2.IMREAD_COLOR)
-    yolo = Tkdnn_darknet("/home/msis_dev/Project/tkDNN/build/yolo4_fp16.rt", 80, 1)
+    yolo = Tkdnn_darknet("/media/data1/workspace/Project/jetson/tkDNN/build/yolo4_fp32.rt", 80, 1, 1, 0.1)
     yolo.queue_image(img)
     res = yolo.inference(0)
     print(res)
